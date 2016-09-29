@@ -14,7 +14,8 @@
         Dim NewCircle As Circle
         For index As Integer = 0 To 9
             NewCircle = New Circle(
-            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 15 + 10, 0, Rnd() * UnityRectangle.Width, Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
+            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 15 + 10, 0, Rnd() * UnityRectangle.Width,
+            Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)
         Next
         Debug.Print("# 生成 Circle 对象完毕！ {0} #", Now.ToString)
@@ -42,8 +43,9 @@
 
             With CircleInstance
                 'UnityGraphics.FillEllipse(New SolidBrush(.Color), .Rectangle)
-                UnityGraphics.DrawImage(My.Resources.UnityResource.face, .Rectangle)
+                UnityGraphics.DrawImage(.Image, .Rectangle)
                 'UnityGraphics.DrawLine(Pens.Red, .Point, New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY))
+                'UnityGraphics.DrawString(((Math.PI + Math.Atan2(.VelocityX, .VelocityY)) * 180 / Math.PI).ToString("000"), Me.Font, Brushes.Red, .Point)
                 'UnityGraphics.DrawString(Index.ToString, Me.Font, Brushes.Yellow, .Point)
             End With
         Next
@@ -84,10 +86,12 @@
     Private Sub UpdateCircle(ByRef CircleObject As Object, Index As Integer)
         Dim CircleInstance As Circle = GetCircle(CircleList(Index))
         Dim CircleCollideObject As Circle
-
+        Dim NewAngle As Integer
         With CircleInstance
             '更新坐标
             .Point = New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY)
+            '更新角度
+            .Angle = (.Angle + IIf(.ClockwiseRotate, 10, -10) + 360) Mod 360
             '与墙壁弹性碰撞（使用 Math.Abs 可以防止与墙壁粘连；分开比较水平与垂直方向防止球体逃逸）
             If .Rectangle.Left <= 0 Then
                 .Point = New Point(.Radius, .Point.Y)
@@ -116,6 +120,9 @@
                     '碰撞之后立即移动，可以减少发生粘连的概率
                     CircleCollideObject.Point = New Point(CircleCollideObject.Point.X + CircleCollideObject.VelocityX, CircleCollideObject.Point.Y + CircleCollideObject.VelocityY)
                     .Point = New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY)
+                    NewAngle = -Math.Atan2(.VelocityX, .VelocityY) * 180 / Math.PI
+                    .ClockwiseRotate = (NewAngle > .LastAngle)
+                    .LastAngle = NewAngle
                     Debug.Print("{0} 与 {1} 发生碰撞！{2}", Index, IndexCollide, Now.ToString)
                 End If
             Next

@@ -1,12 +1,17 @@
-﻿Public Class Circle
+﻿Imports System.Drawing.Drawing2D
+
+Public Class Circle
     Public Color As Color '颜色
     Public Radius As Integer '半径
     Public Mass As Integer '质量
+    Public LastAngle As Integer '上一次速度的角度，用于判断球体图像顺时针还是逆时针旋转
     Public Rectangle As Rectangle '矩形
-    Public Angle As Integer '运动方向角度
     Public VelocityX As Integer '水平分速度
     Public VelocityY As Integer '垂直分速度
+    Public Image As Bitmap '要绘制的图像
+    Public ClockwiseRotate As Boolean '角度 Angle 顺时针旋转
     Private PointInside As Point '坐标
+    Private AngleInside As Integer '图像旋转的角度
 
     Public Sub New(SetColor As Color, SetRadius As Integer, SetMass As Integer, SetPointX As Integer, SetPointY As Integer, SetVelocityX As Integer, SetVelocityY As Integer)
         Color = SetColor
@@ -34,5 +39,36 @@
         End Set
     End Property
 
+    Public Property Angle As Integer
+        Get
+            Return AngleInside
+        End Get
+        Set(value As Integer)
+            AngleInside = value
+            Image = GetRotateBitmap(My.Resources.UnityResource.face, AngleInside)
+        End Set
+    End Property
 
+    ''' <summary>
+    ''' 返回旋转任意角度后的图像
+    ''' </summary>
+    ''' <param name="BitmapRes">需要旋转处理的图像</param>
+    ''' <param name="Angle">旋转角度[单位：度]</param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function GetRotateBitmap(ByVal BitmapRes As Bitmap, ByVal Angle As Single) As Bitmap
+        Dim ReturnBitmap As New Bitmap(BitmapRes.Width, BitmapRes.Height)
+        Dim MyGraphics As Graphics = Graphics.FromImage(ReturnBitmap)
+        MyGraphics.SmoothingMode = SmoothingMode.HighQuality
+        MyGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality
+
+        MyGraphics.TranslateTransform(BitmapRes.Width / 2, BitmapRes.Height / 2)
+        MyGraphics.RotateTransform(Angle, MatrixOrder.Prepend)
+
+        MyGraphics.TranslateTransform(-BitmapRes.Width / 2, -BitmapRes.Height / 2)
+        MyGraphics.DrawImage(BitmapRes, 0, 0, BitmapRes.Width, BitmapRes.Height)
+        MyGraphics.Dispose()
+        GC.Collect()
+        Return ReturnBitmap
+    End Function
 End Class
