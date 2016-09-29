@@ -9,12 +9,13 @@
     Dim CircleList As New ArrayList
 
     Private Sub SimulationForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.Icon = My.Resources.UnityResource.模拟球形物体弹性碰撞
         'Debug.Print("——————————————————————")
         'Debug.Print("# 程序启动！ {0} #", Now.ToString)
         Dim NewCircle As Circle
         For index As Integer = 0 To 9
             NewCircle = New Circle(
-            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 15 + 10, 0, Rnd() * UnityRectangle.Width,
+            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 10 + 10, 0, Rnd() * UnityRectangle.Width,
             Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)
         Next
@@ -44,7 +45,7 @@
             With CircleInstance
                 'UnityGraphics.FillEllipse(New SolidBrush(.Color), .Rectangle)
                 UnityGraphics.DrawImage(.Image, .Rectangle)
-                UnityGraphics.DrawLine(Pens.Red, .Point, New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY))
+                'UnityGraphics.DrawLine(Pens.Red, .Point, New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY))
                 'UnityGraphics.DrawString(Index.ToString, Me.Font, Brushes.Yellow, .Point)
             End With
         Next
