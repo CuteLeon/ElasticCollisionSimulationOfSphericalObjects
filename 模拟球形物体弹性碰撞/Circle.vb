@@ -14,7 +14,7 @@
         'Mass = SetMass'使用球体体积公式自动计算球体质量
         Mass = ((Math.PI * Math.Pow(Radius, 3) * 4) / 3)
         PointInside = New Point(SetPointX, SetPointY)
-        Rectangle = New Rectangle(SetPointX - SetRadius / 2, SetPointY - SetRadius / 2, SetRadius, SetRadius)
+        Rectangle = New Rectangle(SetPointX - SetRadius, SetPointY - SetRadius, SetRadius * 2, SetRadius * 2)
         VelocityX = SetVelocityX
         VelocityY = SetVelocityY
         Debug.Print("生成 Circle：半径({0})，质量({1})，坐标({2},{3})，速度({4},{5})", Radius, Mass, Point.X, Point.Y, VelocityX, VelocityY)
@@ -30,7 +30,7 @@
         End Get
         Set(value As Point)
             PointInside = value
-            Rectangle = New Rectangle(value.X - Radius / 2, value.Y - Radius / 2, Radius, Radius)
+            Rectangle = New Rectangle(value.X - Radius, value.Y - Radius, Radius * 2, Radius * 2)
         End Set
     End Property
 

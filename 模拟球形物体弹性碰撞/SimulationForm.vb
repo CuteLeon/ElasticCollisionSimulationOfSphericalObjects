@@ -1,4 +1,8 @@
 ﻿Public Class SimulationForm
+    'TODO: 
+    '# 球体图像更换为 笑笑照片加圆形透明蒙版
+    '# 球形旋转，Angle as Integer,通过比较碰撞后的速度是顺时针还是逆时针变化，决定球形角度的递增或递减
+
     Dim UnityRectangle As Rectangle = New Rectangle(0, 0, 500, 360)
     Dim UnityBitmap As Bitmap
     Dim UnityGraphics As Graphics
@@ -10,7 +14,7 @@
         Dim NewCircle As Circle
         For index As Integer = 0 To 9
             NewCircle = New Circle(
-            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 30 + 30, 0, Rnd() * UnityRectangle.Width, Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
+            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 15 + 10, 0, Rnd() * UnityRectangle.Width, Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)
         Next
         Debug.Print("# 生成 Circle 对象完毕！ {0} #", Now.ToString)
@@ -80,31 +84,33 @@
     Private Sub UpdateCircle(ByRef CircleObject As Object, Index As Integer)
         Dim CircleInstance As Circle = GetCircle(CircleList(Index))
         Dim CircleCollideObject As Circle
+
         With CircleInstance
             '更新坐标
             .Point = New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY)
-            '与墙壁弹性碰撞（使用 Math.Abs 可以防止与墙壁粘连）
+            '与墙壁弹性碰撞（使用 Math.Abs 可以防止与墙壁粘连；分开比较水平与垂直方向防止球体逃逸）
             If .Rectangle.Left <= 0 Then
-                .Point = New Point(.Radius / 2, .Point.Y)
+                .Point = New Point(.Radius, .Point.Y)
                 .VelocityX = Math.Abs(.VelocityX)
                 Debug.Print("{0} 碰撞到了 左边 墙壁！{1}", Index, Now.ToString)
             ElseIf .Rectangle.Right >= UnityRectangle.Width Then
-                .Point = New Point(UnityRectangle.Width - .Radius / 2, .Point.Y)
+                .Point = New Point(UnityRectangle.Width - .Radius, .Point.Y)
                 .VelocityX = -Math.Abs(.VelocityX)
                 Debug.Print("{0} 碰撞到了 右边 墙壁！{1}", Index, Now.ToString)
-            ElseIf .Rectangle.Top <= 0 Then
-                .Point = New Point(.Point.X, .Radius / 2)
+            End If
+            If .Rectangle.Top <= 0 Then
+                .Point = New Point(.Point.X, .Radius)
                 .VelocityY = Math.Abs(.VelocityY)
                 Debug.Print("{0} 碰撞到了 上边 墙壁！{1}", Index, Now.ToString)
             ElseIf .Rectangle.Bottom >= UnityRectangle.Height Then
-                .Point = New Point(.Point.X, UnityRectangle.Height - .Radius / 2)
+                .Point = New Point(.Point.X, UnityRectangle.Height - .Radius)
                 .VelocityY = -Math.Abs(.VelocityY)
                 Debug.Print("{0} 碰撞到了 下边 墙壁！{1}", Index, Now.ToString)
             End If
             '与球形弹性碰撞
             For IndexCollide As Integer = Index + 1 To CircleList.Count - 1
                 CircleCollideObject = GetCircle(CircleList(IndexCollide))
-                If CircleCollideObject.Rectangle.IntersectsWith(.Rectangle) Then
+                If IsCirclesInCollision(CircleCollideObject, CircleInstance) Then
                     GetVelocityAfterCollision(.Mass, CircleCollideObject.Mass, .VelocityX, CircleCollideObject.VelocityX, .VelocityX, CircleCollideObject.VelocityX)
                     GetVelocityAfterCollision(.Mass, CircleCollideObject.Mass, .VelocityY, CircleCollideObject.VelocityY, .VelocityY, CircleCollideObject.VelocityY)
                     '碰撞之后立即移动，可以减少发生粘连的概率
@@ -115,6 +121,18 @@
             Next
         End With
     End Sub
+
+    ''' <summary>
+    ''' 判断两个 Circle 对象是否相交或相切
+    ''' </summary>
+    ''' <param name="CircleA"></param>
+    ''' <param name="CircleB"></param>
+    ''' <returns></returns>
+    Private Function IsCirclesInCollision(ByVal CircleA As Circle, ByVal CircleB As Circle) As Boolean
+        Dim Distance As Integer
+        Distance = Math.Pow(CircleA.Point.X - CircleB.Point.X, 2) + Math.Pow(CircleA.Point.Y - CircleB.Point.Y, 2)
+        Return (Distance <= Math.Pow(CircleA.Radius + CircleB.Radius, 2))
+    End Function
 
     Private Sub SimulationForm_Click(sender As Object, e As EventArgs) Handles Me.Click
         UnityTimer.Enabled = Not UnityTimer.Enabled
