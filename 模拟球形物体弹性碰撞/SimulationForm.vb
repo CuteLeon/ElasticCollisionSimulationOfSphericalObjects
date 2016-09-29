@@ -1,16 +1,16 @@
 ﻿Public Class SimulationForm
-    'TODO: 
-    '# 球体图像更换为 笑笑照片加圆形透明蒙版
-    '# 球形旋转，Angle as Integer,通过比较碰撞后的速度是顺时针还是逆时针变化，决定球形角度的递增或递减
+    Private Declare Function ReleaseCapture Lib "user32" () As Integer
+    Private Declare Function SendMessageA Lib "user32" (ByVal hwnd As Integer, ByVal wMsg As Integer, ByVal wParam As Integer, lParam As VariantType) As Integer
 
+    'TODO: 判断旋转方向是顺时针还是逆时针的算法有逻辑错误（，但是现在的效果也不错，懒得修改了）
     Dim UnityRectangle As Rectangle = New Rectangle(0, 0, 500, 360)
     Dim UnityBitmap As Bitmap
     Dim UnityGraphics As Graphics
     Dim CircleList As New ArrayList
 
     Private Sub SimulationForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Debug.Print("——————————————————————")
-        Debug.Print("# 程序启动！ {0} #", Now.ToString)
+        'Debug.Print("——————————————————————")
+        'Debug.Print("# 程序启动！ {0} #", Now.ToString)
         Dim NewCircle As Circle
         For index As Integer = 0 To 9
             NewCircle = New Circle(
@@ -18,8 +18,8 @@
             Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)
         Next
-        Debug.Print("# 生成 Circle 对象完毕！ {0} #", Now.ToString)
-        Debug.Print("——————————————————————")
+        'Debug.Print("# 生成 Circle 对象完毕！ {0} #", Now.ToString)
+        'Debug.Print("——————————————————————")
 
         DrawCircleList()
     End Sub
@@ -44,8 +44,7 @@
             With CircleInstance
                 'UnityGraphics.FillEllipse(New SolidBrush(.Color), .Rectangle)
                 UnityGraphics.DrawImage(.Image, .Rectangle)
-                'UnityGraphics.DrawLine(Pens.Red, .Point, New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY))
-                'UnityGraphics.DrawString(((Math.PI + Math.Atan2(.VelocityX, .VelocityY)) * 180 / Math.PI).ToString("000"), Me.Font, Brushes.Red, .Point)
+                UnityGraphics.DrawLine(Pens.Red, .Point, New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY))
                 'UnityGraphics.DrawString(Index.ToString, Me.Font, Brushes.Yellow, .Point)
             End With
         Next
@@ -96,20 +95,20 @@
             If .Rectangle.Left <= 0 Then
                 .Point = New Point(.Radius, .Point.Y)
                 .VelocityX = Math.Abs(.VelocityX)
-                Debug.Print("{0} 碰撞到了 左边 墙壁！{1}", Index, Now.ToString)
+                'Debug.Print("{0} 碰撞到了 左边 墙壁！{1}", Index, Now.ToString)
             ElseIf .Rectangle.Right >= UnityRectangle.Width Then
                 .Point = New Point(UnityRectangle.Width - .Radius, .Point.Y)
                 .VelocityX = -Math.Abs(.VelocityX)
-                Debug.Print("{0} 碰撞到了 右边 墙壁！{1}", Index, Now.ToString)
+                'Debug.Print("{0} 碰撞到了 右边 墙壁！{1}", Index, Now.ToString)
             End If
             If .Rectangle.Top <= 0 Then
                 .Point = New Point(.Point.X, .Radius)
                 .VelocityY = Math.Abs(.VelocityY)
-                Debug.Print("{0} 碰撞到了 上边 墙壁！{1}", Index, Now.ToString)
+                'Debug.Print("{0} 碰撞到了 上边 墙壁！{1}", Index, Now.ToString)
             ElseIf .Rectangle.Bottom >= UnityRectangle.Height Then
                 .Point = New Point(.Point.X, UnityRectangle.Height - .Radius)
                 .VelocityY = -Math.Abs(.VelocityY)
-                Debug.Print("{0} 碰撞到了 下边 墙壁！{1}", Index, Now.ToString)
+                'Debug.Print("{0} 碰撞到了 下边 墙壁！{1}", Index, Now.ToString)
             End If
             '与球形弹性碰撞
             For IndexCollide As Integer = Index + 1 To CircleList.Count - 1
@@ -120,10 +119,11 @@
                     '碰撞之后立即移动，可以减少发生粘连的概率
                     CircleCollideObject.Point = New Point(CircleCollideObject.Point.X + CircleCollideObject.VelocityX, CircleCollideObject.Point.Y + CircleCollideObject.VelocityY)
                     .Point = New Point(.Point.X + .VelocityX, .Point.Y + .VelocityY)
+                    '计算旋转角度和旋转方向
                     NewAngle = -Math.Atan2(.VelocityX, .VelocityY) * 180 / Math.PI
                     .ClockwiseRotate = (NewAngle > .LastAngle)
                     .LastAngle = NewAngle
-                    Debug.Print("{0} 与 {1} 发生碰撞！{2}", Index, IndexCollide, Now.ToString)
+                    'Debug.Print("{0} 与 {1} 发生碰撞！{2}", Index, IndexCollide, Now.ToString)
                 End If
             Next
         End With
@@ -141,7 +141,9 @@
         Return (Distance <= Math.Pow(CircleA.Radius + CircleB.Radius, 2))
     End Function
 
-    Private Sub SimulationForm_Click(sender As Object, e As EventArgs) Handles Me.Click
-        UnityTimer.Enabled = Not UnityTimer.Enabled
+    Private Sub SimulationForm_MouseDown(sender As Object, e As MouseEventArgs) Handles Me.MouseDown
+        ReleaseCapture()
+        SendMessageA(Me.Handle, &HA1, 2, 0&)
     End Sub
+
 End Class

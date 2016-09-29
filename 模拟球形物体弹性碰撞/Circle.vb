@@ -22,7 +22,8 @@ Public Class Circle
         Rectangle = New Rectangle(SetPointX - SetRadius, SetPointY - SetRadius, SetRadius * 2, SetRadius * 2)
         VelocityX = SetVelocityX
         VelocityY = SetVelocityY
-        Debug.Print("生成 Circle：半径({0})，质量({1})，坐标({2},{3})，速度({4},{5})", Radius, Mass, Point.X, Point.Y, VelocityX, VelocityY)
+        LastAngle = -Math.Atan2(VelocityX, VelocityY) * 180 / Math.PI
+        'Debug.Print("生成 Circle：半径({0})，质量({1})，坐标({2},{3})，速度({4},{5})", Radius, Mass, Point.X, Point.Y, VelocityX, VelocityY)
     End Sub
 
     ''' <summary>
