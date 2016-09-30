@@ -14,8 +14,8 @@ Public Class Circle
 
     Public Sub New(SetRadius As Integer, SetPointX As Integer, SetPointY As Integer, SetVelocityX As Integer, SetVelocityY As Integer)
         Radius = SetRadius
-        'Mass = ((Math.PI * Math.Pow(Radius, 3) * 4) / 3) '使用球体体积公式自动计算球体质量
-        Mass = Math.PI * Math.Pow(Radius, 2) '使用圆形面积公式自动计算球体质量
+        Mass = ((Math.PI * Math.Pow(Radius, 3) * 4) / 3) '使用球体体积公式自动计算球体质量
+        'Mass = Math.PI * Math.Pow(Radius, 2) '使用圆形面积公式自动计算球体质量
         PointInside = New Point(SetPointX, SetPointY)
         Rectangle = New Rectangle(SetPointX - SetRadius, SetPointY - SetRadius, SetRadius * 2, SetRadius * 2)
         VelocityX = SetVelocityX
