@@ -1,7 +1,6 @@
 ﻿Imports System.Drawing.Drawing2D
 
 Public Class Circle
-    Public Color As Color '颜色
     Public Radius As Integer '半径
     Public Mass As Integer '质量
     Public LastAngle As Integer '上一次速度的角度，用于判断球体图像顺时针还是逆时针旋转
@@ -13,11 +12,10 @@ Public Class Circle
     Private PointInside As Point '坐标
     Private AngleInside As Integer '图像旋转的角度
 
-    Public Sub New(SetColor As Color, SetRadius As Integer, SetMass As Integer, SetPointX As Integer, SetPointY As Integer, SetVelocityX As Integer, SetVelocityY As Integer)
-        Color = SetColor
+    Public Sub New(SetRadius As Integer, SetPointX As Integer, SetPointY As Integer, SetVelocityX As Integer, SetVelocityY As Integer)
         Radius = SetRadius
-        'Mass = SetMass'使用球体体积公式自动计算球体质量
-        Mass = ((Math.PI * Math.Pow(Radius, 3) * 4) / 3)
+        'Mass = ((Math.PI * Math.Pow(Radius, 3) * 4) / 3) '使用球体体积公式自动计算球体质量
+        Mass = Math.PI * Math.Pow(Radius, 2) '使用圆形面积公式自动计算球体质量
         PointInside = New Point(SetPointX, SetPointY)
         Rectangle = New Rectangle(SetPointX - SetRadius, SetPointY - SetRadius, SetRadius * 2, SetRadius * 2)
         VelocityX = SetVelocityX

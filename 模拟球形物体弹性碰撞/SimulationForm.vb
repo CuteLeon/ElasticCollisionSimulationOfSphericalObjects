@@ -15,8 +15,7 @@
         Dim NewCircle As Circle
         For index As Integer = 0 To 9
             NewCircle = New Circle(
-            Color.FromArgb(160, Rnd() * 255, Rnd() * 255, Rnd() * 255), Rnd() * 10 + 10, 0, Rnd() * UnityRectangle.Width,
-            Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
+             Rnd() * 10 + 10, Rnd() * UnityRectangle.Width, Rnd() * UnityRectangle.Height, Rnd() * 20 - 10, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)
         Next
         'Debug.Print("# 生成 Circle 对象完毕！ {0} #", Now.ToString)
