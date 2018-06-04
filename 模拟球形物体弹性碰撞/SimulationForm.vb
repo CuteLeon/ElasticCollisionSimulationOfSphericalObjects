@@ -13,7 +13,7 @@
         'Debug.Print("——————————————————————")
         'Debug.Print("# 程序启动！ {0} #", Now.ToString)
         Dim NewCircle As Circle
-        For index As Integer = 0 To 9
+        For index As Integer = 0 To 19
             NewCircle = New Circle(
              Rnd() * 10 + 10, Rnd() * UnityRectangle.Width, Rnd() * UnityRectangle.Height, Rnd() * 24 - 12, Rnd() * 20 - 10)
             CircleList.Add(NewCircle)

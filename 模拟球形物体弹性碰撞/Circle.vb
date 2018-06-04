@@ -44,7 +44,7 @@ Public Class Circle
         End Get
         Set(value As Integer)
             AngleInside = value
-            Image = GetRotateBitmap(My.Resources.UnityResource.face, AngleInside)
+            GetRotateBitmap(My.Resources.UnityResource.face, AngleInside, Image)
         End Set
     End Property
 
@@ -55,19 +55,19 @@ Public Class Circle
     ''' <param name="Angle">旋转角度[单位：度]</param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GetRotateBitmap(ByVal BitmapRes As Bitmap, ByVal Angle As Single) As Bitmap
-        Dim ReturnBitmap As New Bitmap(BitmapRes.Width, BitmapRes.Height)
-        Dim MyGraphics As Graphics = Graphics.FromImage(ReturnBitmap)
-        MyGraphics.SmoothingMode = SmoothingMode.HighQuality
-        MyGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality
+    Private Function GetRotateBitmap(ByVal BitmapRes As Bitmap, ByVal Angle As Single, ByRef ReturnBitmap As Bitmap) As Bitmap
+        ReturnBitmap?.Dispose()
+        ReturnBitmap = New Bitmap(BitmapRes.Width, BitmapRes.Height)
+        Using MyGraphics As Graphics = Graphics.FromImage(ReturnBitmap)
+            MyGraphics.SmoothingMode = SmoothingMode.HighQuality
+            MyGraphics.PixelOffsetMode = PixelOffsetMode.HighQuality
 
-        MyGraphics.TranslateTransform(BitmapRes.Width / 2, BitmapRes.Height / 2)
-        MyGraphics.RotateTransform(Angle, MatrixOrder.Prepend)
+            MyGraphics.TranslateTransform(BitmapRes.Width / 2, BitmapRes.Height / 2)
+            MyGraphics.RotateTransform(Angle, MatrixOrder.Prepend)
 
-        MyGraphics.TranslateTransform(-BitmapRes.Width / 2, -BitmapRes.Height / 2)
-        MyGraphics.DrawImage(BitmapRes, 0, 0, BitmapRes.Width, BitmapRes.Height)
-        MyGraphics.Dispose()
-        GC.Collect()
+            MyGraphics.TranslateTransform(-BitmapRes.Width / 2, -BitmapRes.Height / 2)
+            MyGraphics.DrawImage(BitmapRes, 0, 0, BitmapRes.Width, BitmapRes.Height)
+        End Using
         Return ReturnBitmap
     End Function
 End Class
